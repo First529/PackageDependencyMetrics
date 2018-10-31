@@ -1,23 +1,27 @@
 package dependencymetrics;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
         PackageDependencyMetric metric = new PackageDependencyMetric();
-        metric.calculateMetrics("/Users/usa/Desktop/log4j");
+        metric.calculateMetrics("/Users/usa/Desktop/hadoop",
+                "org.apache");
 
         Map<String,PackageInfo> map = metric.getPackageInfoMap();
-        Collection<PackageInfo> packageInfoSet = map.values();
-        for (PackageInfo pkg : packageInfoSet) {
-            System.out.println(pkg);
-        }
+        List<PackageInfo> packageInfoList = new ArrayList<>();
+        packageInfoList.addAll(map.values());
 
-        DataSource data = new DataSource("log4j.csv");
-        data.write(map);
+        Collections.sort(packageInfoList, new Comparator<PackageInfo>() {
+            @Override
+            public int compare(PackageInfo o1, PackageInfo o2) {
+                return o2.getClassCount() - o1.getClassCount();
+            }
+        });
 
+        DataSource data = new DataSource("hadoop.csv");
+        data.write(packageInfoList);
     }
 }

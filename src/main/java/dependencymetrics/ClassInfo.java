@@ -27,7 +27,11 @@ public class ClassInfo {
     }
 
     public String getClassName() {
-        return className;
+        return className.replace(".java", "");
+    }
+
+    public String getAbsolutePath() {
+        return file.getPath();
     }
 
     public boolean isAbstract() {
@@ -55,13 +59,12 @@ public class ClassInfo {
                     String[] data = line.split(" ");
                     packageName = data[1].substring(0, data[1].length()-1);
                 }
-                else if (line.startsWith("import org.apache.logging.log4j")) {
+                else if (line.startsWith("import "+PackageDependencyMetric.rootPackageName)) {
                     isUsingOtherPackages = true;
                     String[] data = line.split(" ");
                     String useClassName = data[1].substring(0, data[1].length()-1);
                     String usePackageName = useClassName.substring(0, useClassName.lastIndexOf("."));
                     packagesImported.add(usePackageName);
-
                 }
                 else if (line.startsWith("public abstract class")) {
                     isAbstract = true;
@@ -71,8 +74,6 @@ public class ClassInfo {
                     isAbstract = true;
                     break;
                 }
-
-
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

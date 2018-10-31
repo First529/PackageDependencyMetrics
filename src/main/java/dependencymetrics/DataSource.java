@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 public class DataSource {
     private static final NumberFormat formatter = new DecimalFormat("#0.00");
@@ -18,16 +17,17 @@ public class DataSource {
         this.filename = filename;
     }
 
-    public void write(Map<String, PackageInfo> packageInfoMap) {
+    public void write(List<PackageInfo> packageInfoList) {
         FileWriter file;
         try {
             file = new FileWriter(filename);
             PrintWriter out = new PrintWriter(file);
 
-            Collection<PackageInfo> packageInfoSet = packageInfoMap.values();
-            out.println("package,NC,A,I,D");
-            for (PackageInfo pkg : packageInfoSet) {
-                out.print(pkg.getPackageName().replace("org.apache.logging.","") + ",");
+            out.println("id,package,NC,A,I,D");
+            int id = 0;
+            for (PackageInfo pkg : packageInfoList) {
+                out.print(++id + ",");
+                out.print(pkg.getPackageName() + ",");
                 out.print(pkg.getClassCount() + ",");
                 out.print(formatter.format(pkg.getAbstractness()) + ",");
                 out.print(formatter.format(pkg.getInstability()) + ",");
